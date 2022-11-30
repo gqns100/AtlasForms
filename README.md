@@ -3,7 +3,7 @@ Forms Based UI for MongoDB Atlas
 
 # Docs
 
-Docs are being written in google Docs for now
+Docs are being written in google Docs for now 
 
 Getting Started: https://mdb.link/AtlasForms
 Manual: https://mdb.link/AtlasFormsManual
