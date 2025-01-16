@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.rbacsystem.mapper.RoleMapper">
+    <!-- Result Maps -->
+    <resultMap id="roleResultMap" type="com.example.rbacsystem.model.Role">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <collection property="permissions" ofType="com.example.rbacsystem.model.Permission"
+                    select="findPermissionsByRoleId" column="id"/>
+    </resultMap>
+
+    <resultMap id="permissionResultMap" type="com.example.rbacsystem.model.Permission">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <!-- Reusable SQL fragments -->
+    <sql id="roleColumns">id, name, description</sql>
+
+    <!-- Complex queries -->
+    <select id="findPermissionsByRoleId" resultMap="permissionResultMap">
+        SELECT p.id, p.name, p.description
+        FROM permissions p
+        INNER JOIN role_permissions rp ON p.id = rp.permission_id
+        WHERE rp.role_id = #{roleId}
+    </select>
+
+    <select id="findByName" resultMap="roleResultMap">
+        SELECT <include refid="roleColumns"/>
+        FROM roles
+        WHERE name = #{name}
+    </select>
+
+    <select id="existsByName" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM roles
+        WHERE name = #{name}
+    </select>
+
+    <select id="findById" resultMap="roleResultMap">
+        SELECT <include refid="roleColumns"/>
+        FROM roles
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="roleResultMap">
+        SELECT <include refid="roleColumns"/>
+        FROM roles
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO roles (name, description)
+        VALUES (#{name}, #{description})
+    </insert>
+
+    <update id="update">
+        UPDATE roles
+        SET name = #{name},
+            description = #{description}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM roles WHERE id = #{id}
+    </delete>
+
+    <insert id="addRolePermission">
+        INSERT INTO role_permissions (role_id, permission_id)
+        VALUES (#{roleId}, #{permissionId})
+    </insert>
+
+    <delete id="removeRolePermission">
+        DELETE FROM role_permissions
+        WHERE role_id = #{roleId} AND permission_id = #{permissionId}
+    </delete>
+</mapper>

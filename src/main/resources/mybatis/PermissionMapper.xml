@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.rbacsystem.mapper.PermissionMapper">
+    <!-- Result Maps -->
+    <resultMap id="permissionResultMap" type="com.example.rbacsystem.model.Permission">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <!-- Reusable SQL fragments -->
+    <sql id="permissionColumns">id, name, description</sql>
+
+    <!-- Queries -->
+    <select id="findByName" resultMap="permissionResultMap">
+        SELECT <include refid="permissionColumns"/>
+        FROM permissions
+        WHERE name = #{name}
+    </select>
+
+    <select id="existsByName" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM permissions
+        WHERE name = #{name}
+    </select>
+
+    <select id="findById" resultMap="permissionResultMap">
+        SELECT <include refid="permissionColumns"/>
+        FROM permissions
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="permissionResultMap">
+        SELECT <include refid="permissionColumns"/>
+        FROM permissions
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO permissions (name, description)
+        VALUES (#{name}, #{description})
+    </insert>
+
+    <update id="update">
+        UPDATE permissions
+        SET name = #{name},
+            description = #{description}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM permissions WHERE id = #{id}
+    </delete>
+</mapper>
